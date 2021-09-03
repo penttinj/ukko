@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeMCU Weather Station</title>
+    <script defer src="interface.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <link rel="icon" type="image/png" href="favicon.ico">
+</head>
+
+<body>
+    <div class="grid-container">
+        <div class="cell position1"></div>
+        <div class="cell position2"></div>
+        <div class="cell position-forecast">
+            <div class="title">Forecast</div>
+        </div>
+        <div class="cell position-graph">
+            <div class="title">Graph</div>
+        </div>
+        <div class="cell position3"></div>
+        <div class="cell position4">
+            <div class="updated">
+                Senast uppdaterad:<span id="updatedAt"></span>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
