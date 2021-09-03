@@ -2,53 +2,60 @@
 #include <ESP8266HTTPClient.h>
 #include "DHT.h"
 
+
 #define DHT_PIN 5
 #define DHT_TYPE DHT22
+#define POWER_PIN 4
 #define NAME "Balcony"
 
 #define SERVER_IP "192.168.31.4:5000"
 
-#ifndef STASSID
-#define STASSID "Honungsburken 2.4GHz"
-#define STAPSK  "nagalunda"
-#endif
+char wifi_ssid[] = "Honungsburken 2.4GHz";
+char wifi_psk[] = "nagalunda";
 
-int readDelay = 30e6; // 30 seconds
+int sleepTime = 30e6; // 30 seconds
 DHT dht(DHT_PIN, DHT_TYPE);
 
-
 void setup() {
+  // Enables the legacy mode of turning off the wifi module immediately on boot
+  // This seems to save a couple seconds of on-time compared to calling WiFi.begin()
+  // https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/generic-class.html#persistent
+  enableWiFiAtBootTime();
 
   Serial.begin(9600);
   Serial.setTimeout(2000);
-
   while (!Serial) { }
-
+  
+  pinMode(POWER_PIN, OUTPUT);
+  digitalWrite(POWER_PIN, HIGH); // Turn on power for the DHT
+  
   dht.begin();
-
-  Serial.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-  Serial.println("NodeMCU started");
 
   connect();
 
-  if ((WiFi.status() == WL_CONNECTED)) {
-    float* data = read();
-    postData(data);
+  float* data = read();
+  digitalWrite(POWER_PIN, LOW);
+  postData(data);
+  delete[] data;
 
-    delete[] data;
-
-  }
-
-  ESP.deepSleep(readDelay);
+  Serial.printf("Going to sleep for %d \n", sleepTime);
+  ESP.deepSleep(sleepTime);
 }
 
 void connect() {
-  WiFi.begin(STASSID, STAPSK);
+  if (WiFi.SSID() != wifi_ssid) {
+    Serial.println("Executing WiFi.begin()...");
+    WiFi.persistent(true);
+    WiFi.setAutoConnect(true);
+    WiFi.setAutoReconnect(true);
+    WiFi.begin(wifi_ssid, wifi_psk);
+  }
 
   // wait for WiFi connection
+  Serial.println("Waiting for wifi connection");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(".");
+    Serial.print(WiFi.status());
   }
   Serial.println("");
   Serial.print("Connected! IP address: ");
@@ -60,8 +67,6 @@ void postData(float *values) {
   WiFiClient client;
   HTTPClient http;
 
-  // Serial.print("[HTTP] begin...\n");
-
   // config the target server
   http.begin(client, "http://" SERVER_IP "/sensors");
   http.addHeader("Content-Type", "application/json");
@@ -69,6 +74,8 @@ void postData(float *values) {
   // Serial.print("[HTTP] POST...\n");
   String body = "{";
   body = body + "\"node_name\":\"" + NAME + "\",\n\"humidity\":" + values[0] + ",\n\"temperature\":" + values[1] + ",\n\"feels_like\":" + values[2] + "}";
+
+  Serial.println("body=" + body);
 
   // start connection and send HTTP header and body
   int httpCode = http.POST(body);
@@ -86,7 +93,7 @@ void postData(float *values) {
       // Serial.println(">>");
     }
   } else {
-    // Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
+    Serial.printf("[HTTP] POST... failed, error: %s\n", http.errorToString(httpCode).c_str());
   }
 
   http.end();
@@ -100,7 +107,7 @@ float* read() {
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(h) || isnan(t)) {
-    // Serial.println("Failed to read from DHT sensor!");
+    Serial.println("Failed to read from DHT sensor!");
     exit(0);
   }
 
