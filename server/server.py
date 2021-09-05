@@ -20,7 +20,7 @@ CORS(app)
 
 
 @app.route("/")
-def hello_there():
+def root():
     return render_template("index.html", message=sensors)
 
 @app.route("/favicon.ico")
@@ -41,21 +41,6 @@ def parse_data():
 @app.route("/sensors", methods=["GET"])
 def get_readings():
     return jsonify(sensors), 200
-
-
-"""
-@app.route("/")
-def hello_there():
-    print(f"{time.asctime()} Received request for {request.url} from {request.remote_addr}")
-    return (
-            f"<html><body style='font-size: 4rem;'> \
-        Temperatur: {sensors['temperature']}° C </br> \
-        Fukthalt: {sensors['humidity']}% </br> \
-        Känns som: {sensors['feels_like']}° C </br> \
-        </body></html>",
-        200,
-    )
-"""
 
 
 @app.after_request

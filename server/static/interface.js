@@ -1,6 +1,6 @@
 let positions = {
     "position1": {
-        "node_name": "Balcony",
+        "node_name": "Balkongen",
         "type": "temp-hum",
         "values": {},
         "elementId": "foo1"
