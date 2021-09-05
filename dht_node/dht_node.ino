@@ -6,7 +6,7 @@
 #define DHT_PIN 5
 #define DHT_TYPE DHT22
 #define POWER_PIN 4
-#define NAME "Balcony"
+#define NAME "Balkongen"
 
 #define SERVER_IP "192.168.31.4:5000"
 
@@ -25,10 +25,10 @@ void setup() {
   Serial.begin(9600);
   Serial.setTimeout(2000);
   while (!Serial) { }
-  
+
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH); // Turn on power for the DHT
-  
+
   dht.begin();
 
   connect();
@@ -38,7 +38,7 @@ void setup() {
   postData(data);
   delete[] data;
 
-  Serial.printf("Going to sleep for %d \n", sleepTime);
+   Serial.printf("Going to sleep for %d \n", sleepTime);
   ESP.deepSleep(sleepTime);
 }
 
@@ -75,7 +75,7 @@ void postData(float *values) {
   String body = "{";
   body = body + "\"node_name\":\"" + NAME + "\",\n\"humidity\":" + values[0] + ",\n\"temperature\":" + values[1] + ",\n\"feels_like\":" + values[2] + "}";
 
-  Serial.println("body=" + body);
+  // Serial.println("body=" + body);
 
   // start connection and send HTTP header and body
   int httpCode = http.POST(body);
