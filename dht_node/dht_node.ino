@@ -1,6 +1,9 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
 #include "DHT.h"
+#include <map>
+#include <iterator>
+
 
 
 #define DHT_PIN 5
@@ -16,31 +19,27 @@ char wifi_psk[] = "nagalunda";
 int sleepTime = 30e6; // 30 seconds
 DHT dht(DHT_PIN, DHT_TYPE);
 
-void setup() {
-  // Enables the legacy mode of turning off the wifi module immediately on boot
-  // This seems to save a couple seconds of on-time compared to calling WiFi.begin()
-  // https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/generic-class.html#persistent
-  enableWiFiAtBootTime();
+std::map<String, float> read() {
+  std::map<String, float> m;
+  float h = dht.readHumidity();
+  m.insert(std::make_pair("humidity", h));
+  // Read temperature as Celsius (the default)
+  float t = dht.readTemperature();
+  m.insert(std::make_pair("temperature", t));
 
-  Serial.begin(9600);
-  Serial.setTimeout(2000);
-  while (!Serial) { }
+  // Check if any reads failed and exit early (to try again).
+  if (isnan(h) || isnan(t)) {
+    Serial.println("Failed to read from DHT sensor!");
+    exit(0);
+  }
 
-  pinMode(POWER_PIN, OUTPUT);
-  digitalWrite(POWER_PIN, HIGH); // Turn on power for the DHT
+  // Compute heat index in Celsius (isFahreheit = false)
+  float hic = dht.computeHeatIndex(t, h, false);
+  m.insert(std::make_pair("feels_like", hic));
 
-  dht.begin();
-
-  connect();
-
-  float* data = read();
-  digitalWrite(POWER_PIN, LOW);
-  postData(data);
-  delete[] data;
-
-   Serial.printf("Going to sleep for %d \n", sleepTime);
-  ESP.deepSleep(sleepTime);
+  return m;
 }
+
 
 void connect() {
   if (WiFi.SSID() != wifi_ssid) {
@@ -62,8 +61,8 @@ void connect() {
   Serial.println(WiFi.localIP());
 }
 
-// TODO: Use a map instead of array
-void postData(float *values) {
+
+void postData(std::map<String, float> data) {
   WiFiClient client;
   HTTPClient http;
 
@@ -71,9 +70,18 @@ void postData(float *values) {
   http.begin(client, "http://" SERVER_IP "/sensors");
   http.addHeader("Content-Type", "application/json");
 
-  // Serial.print("[HTTP] POST...\n");
   String body = "{";
-  body = body + "\"node_name\":\"" + NAME + "\",\n\"humidity\":" + values[0] + ",\n\"temperature\":" + values[1] + ",\n\"feels_like\":" + values[2] + "}";
+  body = body + "\"node_name\":\"" + NAME + "\",\n";
+  std::map<String, float>::iterator iter = data.begin();
+  // Push the the values to a json string
+  while (iter != data.end()) {
+    body = body + "\"" + iter->first + "\":" + iter->second + ",\n";
+    iter++;
+  }
+
+  body.remove(body.length() - 3);
+
+  body = body + "}";
 
   // Serial.println("body=" + body);
 
@@ -99,27 +107,37 @@ void postData(float *values) {
   http.end();
 }
 
-float* read() {
-  float* sensors = new float[3];
-  float h = dht.readHumidity();
-  // Read temperature as Celsius (the default)
-  float t = dht.readTemperature();
 
-  // Check if any reads failed and exit early (to try again).
-  if (isnan(h) || isnan(t)) {
-    Serial.println("Failed to read from DHT sensor!");
-    exit(0);
-  }
+void setup() {
+  // Enables the legacy mode of turning off the wifi module immediately on boot
+  // This seems to save a couple seconds of on-time compared to calling WiFi.begin()
+  // https://arduino-esp8266.readthedocs.io/en/latest/esp8266wifi/generic-class.html#persistent
+  enableWiFiAtBootTime();
 
-  // Compute heat index in Celsius (isFahreheit = false)
-  float hic = dht.computeHeatIndex(t, h, false);
+  Serial.begin(9600);
+  Serial.setTimeout(2000);
+  while (!Serial) { }
 
-  sensors[0] = h;
-  sensors[1] = t;
-  sensors[2] = hic;
+  // Serial.println("Power on");
 
-  return sensors;
+  pinMode(POWER_PIN, OUTPUT);
+  digitalWrite(POWER_PIN, HIGH); // Turn on power for the DHT
+
+  dht.begin();
+
+  connect();
+
+  std::map<String, float> data = read();
+  digitalWrite(POWER_PIN, LOW);
+  postData(data);
+  //delete[] data;
+
+  Serial.printf("Going to sleep for %d \n", sleepTime);
+  ESP.deepSleep(sleepTime);
 }
+
+
+
 
 void loop() {
 
