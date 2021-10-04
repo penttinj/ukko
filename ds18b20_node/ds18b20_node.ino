@@ -15,7 +15,7 @@
 
 char wifi_ssid[] = "Honungsburken 2.4GHz";
 char wifi_psk[] = "nagalunda";
-int sleepTime = 30e6; // 30 seconds
+int sleepTime = 120e6; // 120 seconds
 OneWire oneWire(ONE_WIRE_BUS);
 DallasTemperature sensors(&oneWire);
 
@@ -26,6 +26,7 @@ std::map<String, float> read() {
   
   float t = sensors.getTempCByIndex(0);
   m.insert(std::make_pair("temperature", t));
+  /////////////////////////////////////Serial.printf("Temperature is %f \n", t);
 
   // Check if any reads failed and exit early (to try again).
   if (isnan(t)) {
@@ -47,14 +48,14 @@ void connect() {
   }
 
   // wait for WiFi connection
-  Serial.println("Waiting for wifi connection");
+  /////////////////////////////////////Serial.println("Waiting for wifi connection");
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
-    Serial.print(WiFi.status());
+    /////////////////////////////////////Serial.print(WiFi.status());
   }
-  Serial.println("");
-  Serial.print("Connected! IP address: ");
-  Serial.println(WiFi.localIP());
+  /////////////////////////////////////Serial.println("");
+  /////////////////////////////////////Serial.print("Connected! IP address: ");
+  /////////////////////////////////////Serial.println(WiFi.localIP());
 }
 
 
@@ -114,8 +115,6 @@ void setup() {
   Serial.setTimeout(2000);
   while (!Serial) { }
 
-  // Serial.println("Power on");
-
   pinMode(POWER_PIN, OUTPUT);
   digitalWrite(POWER_PIN, HIGH); // Turn on power for the DHT
 
@@ -128,7 +127,15 @@ void setup() {
   postData(data);
   //delete[] data;
 
-  Serial.printf("Going to sleep for %d \n", sleepTime);
+  if (data.find("temperature")->second > 35) {
+    /////////////////////////////////////Serial.println("Temperature is over 35, setting sleep to 120s");
+    sleepTime = 60e6;
+  } else {
+    /////////////////////////////////////Serial.println("Temperature is under 35, setting sleep to 10 mins");
+    sleepTime = 600e6;
+  }
+
+  /////////////////////////////////////Serial.printf("Going to sleep for %d \n", sleepTime);
   ESP.deepSleep(sleepTime);
 }
 
