@@ -1,3 +1,5 @@
+"use strict"
+
 let positions = {
     "position1": {
         "node_name": "Balkongen",
