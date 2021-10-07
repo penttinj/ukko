@@ -59,7 +59,10 @@ const createTempCard = async (reading, id) => {
     temp.appendChild(document.createElement("br"));
     hum.appendChild(document.createTextNode(reading.values.humidity ? `💦${reading.values.humidity}%` : "💦 -"));
     hum.appendChild(document.createElement("br"));
-    feels.appendChild(document.createTextNode(`🤯${reading.values.feels_like ? reading.values.feels_like + "°C" : " -"}`));
+    feels.appendChild(document.createTextNode(`❄4.20C`));
+    feels.appendChild(document.createElement("br"));
+    feels.appendChild(document.createTextNode(`🔥69.00C`));
+
 
     cardDiv.appendChild(title);
     cardDiv.appendChild(temp);
