@@ -1,4 +1,4 @@
-# /bin/env python
+#! /bin/env python3
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -13,7 +13,9 @@ import queue
 import os
 
 config = {"DEBUG": True}  # some Flask specific configs
+# Global variable holding all the sensor data
 sensors = dict()
+
 
 app = flask.Flask(__name__)
 CORS(app)
@@ -33,20 +35,32 @@ def serve_favicon():
 def parse_data():
     data: dict = request.get_json()
     node_name = data["node_name"]
-    sensors[node_name] = dict()
+    if node_name not in sensors:
+        print(f"sensors[{node_name}] was not in sensors dict")
+        sensors[node_name] = dict()
+        sensors[node_name]["current_day"] = time.localtime()[2]
+    elif sensors[node_name]["current_day"] != time.localtime()[2]:
+        # Is there a smarter way to do this? If i add an `or` to the previous if statement, there'll
+        # be a KeyError.
+        print(f"New day for sensors[{node_name}]")
+        sensors[node_name] = dict()
+        sensors[node_name]["current_day"] = time.localtime()[2]
     for key, value in data.items():
         sensors[node_name][key] = value
     sensors["updated"] = time.asctime()
-    sensors[node_name]["min"] = (
-        data["temperature"]
-        if sensors[node_name]["min"] > data["temperature"]
-        else sensors[node_name]["min"]
-    )
-    sensors[node_name]["max"] = (
-        data["temperature"]
-        if sensors[node_name]["max"] < data["temperature"]
-        else sensors[node_name]["max"]
-    )
+    if ("min" not in sensors[node_name]):
+        print(f"min not in {sensors[node_name]}", "min" not in sensors[node_name])
+        sensors[node_name]["min"] = data["temperature"]
+    if ("max" not in sensors[node_name]):
+        print(f"max not in {sensors[node_name]}", "max" not in sensors[node_name])
+        sensors[node_name]["max"] = data["temperature"]
+
+    if sensors[node_name]["min"] > data["temperature"]:
+        sensors[node_name]["min"] = data["temperature"]
+    
+    if sensors[node_name]["max"] < data["temperature"]:
+        sensors[node_name]["max"] = data["temperature"]
+    
     print("New sensors dict:", sensors)
     return jsonify(data), 200
 

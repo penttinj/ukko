@@ -61,9 +61,10 @@ const createTempCard = async (reading, id) => {
     temp.appendChild(document.createElement("br"));
     hum.appendChild(document.createTextNode(reading.values.humidity ? `💦${reading.values.humidity}%` : "💦 -"));
     hum.appendChild(document.createElement("br"));
-    minmax.appendChild(document.createTextNode(reading.values.min && `❄️${reading.values.min}°C`));
+    minmax.appendChild(document.createTextNode(reading.values.min ? `❄️${reading.values.min}°C` : "❄️ -"));
     minmax.appendChild(document.createElement("br"));
-    minmax.appendChild(document.createTextNode(reading.values.max && `🔥${reading.values.max}°C`));
+    minmax.appendChild(document.createTextNode(reading.values.max ? `🔥${reading.values.max}°C` : "🔥 -"));
+    console.log("reading=", reading);
 
 
     cardDiv.appendChild(title);
