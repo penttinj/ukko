@@ -1,4 +1,4 @@
-#/bin/env python
+# /bin/env python
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -23,9 +23,11 @@ CORS(app)
 def root():
     return render_template("index.html", message=sensors)
 
+
 @app.route("/favicon.ico")
 def serve_favicon():
     return app.send_static_file("favicon.ico")
+
 
 @app.route("/sensors", methods=["POST"])
 def parse_data():
@@ -35,8 +37,19 @@ def parse_data():
     for key, value in data.items():
         sensors[node_name][key] = value
     sensors["updated"] = time.asctime()
+    sensors[node_name]["min"] = (
+        data["temperature"]
+        if sensors[node_name]["min"] > data["temperature"]
+        else sensors[node_name]["min"]
+    )
+    sensors[node_name]["max"] = (
+        data["temperature"]
+        if sensors[node_name]["max"] < data["temperature"]
+        else sensors[node_name]["max"]
+    )
     print("New sensors dict:", sensors)
     return jsonify(data), 200
+
 
 @app.route("/sensors", methods=["GET"])
 def get_readings():
