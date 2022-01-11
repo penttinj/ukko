@@ -21,5 +21,6 @@ module.exports = {
     ],
     rules: {
         indent: ['error', 4],
+        'capitalized-comments': ['error', 'never'],
     },
 };

@@ -1,8 +1,9 @@
 import React from 'react';
-import {Button} from '@mui/material';
+// import {Button} from '@mui/material';
 import Grid from '@mui/material/Grid';
-import Test from './TestComp/TestComp';
-import logo from './logo.svg';
+import TestComp from './TestComp/TestComp';
+import SensorCell from './SensorCell';
+// import logo from './logo.svg';
 import './App.css';
 
 function App(props: any) {
@@ -10,18 +11,26 @@ function App(props: any) {
 
     return (
         <Grid container spacing={2}>
-            <Grid item xs={8}>
-        Shoop
+            <Grid item xs={12} md={8}>
+                <TestComp>
+                    Shoop
+                </TestComp>
             </Grid>
-            <Grid item xs={4}>
-        Da
+            <Grid item xs={12} md={4}>
+                <TestComp>
+                    Da
+                </TestComp>
             </Grid>
-            <Grid item xs={6}>
-        Whoop
+            <Grid item xs={12} md={6}>
+                <TestComp>
+                    Whoop
+                </TestComp>
             </Grid>
-            <Test>
-              Testers
-            </Test>
+            <Grid item xs={12} md={6}>
+                <SensorCell>
+                    <a>Sup</a>
+                </SensorCell>
+            </Grid>
         </Grid>
     );
 }
