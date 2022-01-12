@@ -1,20 +1,34 @@
 import React from 'react';
-// import styled from '@emotion/styled';
-import Paper from '@mui/material/Paper';
+import { styled as muiStyled } from '@mui/material/styles';
+import styled from '@emotion/styled';
+import Grid from '@mui/material/Grid';
 
 interface CellProps {
     // eslint-disable-next-line no-undef
     children: JSX.Element;
 }
 
+const Test = styled.div`
+    color: black;
+    background: MediumAquaMarine;
+    width: 100%;
+    height: 100%;
+`;
+
+export const GridItem = muiStyled(Grid)(({ theme }) => {
+    console.log('theme=', theme);
+    return ({
+        background: 'MediumAquaMarine',
+        padding: theme.padding,
+    });
+});
+
 export const SensorCell = (props: CellProps) => {
     console.log('Yeet', props.children);
+    // const asdf = props.children;
     return (
-        <Paper sx={{textAlign: 'center'}}>
-            <img src="https://i.imgur.com/MptlRRl.png" height="200"/> <br />
-            Hello There.
-        </Paper>
+        <Test />
     );
 };
 
-export default SensorCell;
+export default GridItem;

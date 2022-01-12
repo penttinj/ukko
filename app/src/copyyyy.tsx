@@ -1,8 +1,8 @@
 import React from 'react';
-import {Button} from '@mui/material';
+import { Button } from '@mui/material';
 import Grid from '@mui/material/Grid';
 import TestComp from './TestComp/TestComp';
-import {SplitScreen} from './TestComp/SplitScreen';
+import { SplitScreen } from './TestComp/SplitScreen';
 import logo from './logo.svg';
 import './App.css';
 
