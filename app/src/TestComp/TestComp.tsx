@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { Button } from '@mui/material';
 
 const Test = styled.div`
     color: black;
@@ -7,12 +8,15 @@ const Test = styled.div`
     width: 100%;
     height: 50vh;
 `;
-
-const TestComp = ({ children }: {children: string}) => { // https://www.designcise.com/web/tutorial/how-to-specify-types-for-destructured-object-properties-using-typescript
+// https://www.designcise.com/web/tutorial/how-to-specify-types-for-
+// destructured-object-properties-using-typescript
+const TestComp = ({ children }: {children?: string}) => {
+    const [data, setData] = useState(1);
     console.log('children=', typeof children);
     return (
         <Test>
-            {children}<br />
+            <Button onClick={() => setData(data + 1)}>Toggle Data</Button>
+            {data}
         </Test>
     );
 };

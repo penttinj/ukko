@@ -10,7 +10,7 @@ interface CellProps {
 
 const Test = styled.div`
     color: black;
-    background: MediumAquaMarine;
+    background: #DB827B;
     width: 100%;
     height: 100%;
 `;
@@ -18,7 +18,7 @@ const Test = styled.div`
 export const GridItem = muiStyled(Grid)(({ theme }) => {
     console.log('theme=', theme);
     return ({
-        background: 'MediumAquaMarine',
+        background: '#DB827B',
         padding: theme.padding,
     });
 });

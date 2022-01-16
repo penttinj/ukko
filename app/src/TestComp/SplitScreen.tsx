@@ -25,8 +25,11 @@ props => ({
 );
 
 interface ItemProps {
+    // react.FunctionComponent<any>[];
+    // https://stackoverflow.com/questions/31815633/what-does-the-
+    // error-jsx-element-type-does-not-have-any-construct-or-call
     // eslint-disable-next-line no-undef
-    children: JSX.Element[];// react.FunctionComponent<any>[]; // https://stackoverflow.com/questions/31815633/what-does-the-error-jsx-element-type-does-not-have-any-construct-or-call
+    children: JSX.Element[];
     leftWeight: number;
     rightWeight: number;
 }
