@@ -5,9 +5,19 @@ import { red } from '@mui/material/colors';
 declare module '@mui/material/styles' {
     interface Theme {
         padding: string;
+        item: {
+            padding: string;
+            radius: string;
+            background?: string;
+        }
     }
     interface ThemeOptions {
         padding?: string;
+        item?: {
+            padding?: string;
+            radius?: string;
+            background?: string;
+        }
     }
 }
 
@@ -24,7 +34,11 @@ const theme = createTheme({
             main: red.A400,
         },
     },
-    padding: '10px',
+    item: {
+        padding: '0.5rem',
+        radius: '1rem',
+        background: 'MediumAquaMarine',
+    },
 });
 
 export default theme;
