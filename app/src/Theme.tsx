@@ -31,7 +31,7 @@ declare module '@mui/material/styles' {
 // eslint-disable-next-line no-undef
 export const Theme = ({ children }: { children: JSX.Element|JSX.Element[] }) => {
     // https://mui.com/customization/dark-mode/#system-preference
-    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+    const prefersDarkMode = useMediaQuery('(prefers-color-scheme: light)');
     console.log('window object:', window);
     // a custom theme for this app
 

@@ -52,12 +52,21 @@ function App(props: any) {
         setData(parsed);
     };
 
+    const subscribeToData = async (apiUrl: string) => {
+        await getSumData(apiUrl);
+
+        setInterval(async () => {
+            getSumData(apiUrl);
+        }, 5000);
+    };
+
     useEffect(() => {
-        getSumData(apiUrl);
-    }, []);
+        console.log('Running useEffect');
+        subscribeToData(apiUrl);
+    },
+    []);
 
     console.log('props=', props);
-    console.log('data=', data);
 
     return (
         <Background>
