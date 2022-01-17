@@ -6,7 +6,7 @@ import GridItem from './GridItem';
 // import logo from './logo.svg';
 import './App.css';
 import TestComp from './TestComp/TestComp';
-import { Card, Fab, Paper } from '@mui/material';
+import { Button, Card, Fab, Paper, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
 interface SensorData {
@@ -21,6 +21,16 @@ interface SensorData {
     }
     updated?: Date;
 }
+
+const Background = styled('div')(({ theme }) => ({
+    background: theme.palette.background.default,
+}));
+
+const Symbol = styled('span')(({ theme }) => ({
+    fontFamily: theme.typography.fontFamily,
+    fontSize: theme.symbol.size,
+    verticalAlign: 'text-top',
+}));
 
 const Item = styled(Paper)(({ theme }) => ({
     ...theme.typography.body2,
@@ -50,38 +60,43 @@ function App(props: any) {
     console.log('data=', data);
 
     return (
-        <Grid
-            container
-            height="100vh"
-            columnSpacing={3}
-            rowGap={3}
-            justifyContent="space-around"
-        >
-            <GridItem item xs={12} md={4}>
-                <div>
+        <Background>
+            <Grid
+                container
+                height="100vh"
+            >
+                <GridItem item xs={12} md={3}>
+                    <Typography variant="body1">
                     Temperature is: {data?.updated === undefined
-                        ? 'Waiting For Data...'
-                        : data.Balkongen?.temperature}
-                </div>
-            </GridItem>
-            <GridItem item xs={12} md={4}>
-                <div>Line One</div><div>Line Two</div>
-            </GridItem>
-            <GridItem item xs={12} md={4}>
-                <Card>Hi My name is Daisy!</Card>
-            </GridItem>
-            <GridItem item xs={12} md={4}>
-                <Item>xs=8</Item>
-            </GridItem>
-            <GridItem item xs={12} md={4}>
+                            ? 'Waiting For Data...'
+                            : <>
+                                {data.Balkongen?.temperature}
+                                <Symbol>°C</Symbol>
+                            </>}
+                    </Typography>
+                </GridItem>
+                <GridItem item xs={12} md={3}>
+                    <div>Line One</div><div>Line Two</div>
+                </GridItem>
+                <GridItem item xs={12} md={6}>
+                    <Paper>
+                        Hi My name is Daisy!<br/>
+                        <Button variant="contained" color="info">Pls click.</Button>
+                    </Paper>
+                </GridItem>
+                <GridItem item xs={12} md={6}>
+                    <Item>xs=8</Item>
+                </GridItem>
+                <GridItem item xs={12} md={3}>
                 asdfasdf
-            </GridItem>
-            <GridItem item xs={12} md={4}>
-                <Fab color="primary" aria-label="add">
-                    <AddIcon />
-                </Fab>
-            </GridItem>
-        </Grid>
+                </GridItem>
+                <GridItem item xs={12} md={3}>
+                    <Fab color="primary" aria-label="add">
+                        <AddIcon />
+                    </Fab>
+                </GridItem>
+            </Grid>
+        </Background>
     );
 }
 

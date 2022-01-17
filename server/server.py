@@ -65,7 +65,7 @@ def parse_data():
     return jsonify(data), 200
 
 
-@app.route("/sensors", methods=["GET"])
+@app.route("/api/v1/sensors", methods=["GET"])
 def get_readings():
     return jsonify(sensors), 200
 

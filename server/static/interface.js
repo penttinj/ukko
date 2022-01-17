@@ -28,7 +28,7 @@ let positions = {
 }
 
 const getAllReadings = async (url) => {
-    const r = await fetch(`${url}/sensors`);
+    const r = await fetch(`${url}/api/v1/sensors`);
     const resString = await r.text();
     const res = JSON.parse(resString);
     //console.log("getAllReadings: Got response: ", res);
