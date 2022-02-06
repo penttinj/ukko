@@ -9,19 +9,13 @@ import TestComp from './TestComp/TestComp';
 import { Button, Card, Fab, Paper, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { ResourceLoader } from './ResourceLoader';
-import { Dht22Data } from './Dht22Data';
+import { Dht22 } from './Dht22';
+import { Ds18 } from './Ds18';
 
-interface SensorData {
-    Balkongen?: {
-        current_day: number;
-        feels_like: number;
-        humidity: number;
-        max: number;
-        min: number;
-        node_name: string;
-        temperature: number;
-    }
-    updated?: Date;
+type Resource = 'dht22' | 'ds18';
+interface ISensorIdentifier {
+    name: string;
+    type: Resource;
 }
 
 const Background = styled('div')(({ theme }) => ({
@@ -34,17 +28,23 @@ const Symbol = styled('span')(({ theme }) => ({
     verticalAlign: 'text-top',
 }));
 
-const Item = styled(Paper)(({ theme }) => ({
-    ...theme.typography.body2,
-    padding: theme.spacing(1),
-    textAlign: 'center',
-    color: theme.palette.text.secondary,
-    borderRadius: theme.item.radius,
-}));
-
 function App(props: any) {
     const apiUrl = 'http://192.168.31.4:5000/api/v1/sensors';
-    const [data, setData]: [SensorData, any] = useState({});
+    const [slot1, setSlot1] = useState<ISensorIdentifier>({ name: 'Balkongen', type: 'dht22' });
+    const [slot2, setSlot2] = useState<ISensorIdentifier>({ name: 'Bastu', type: 'ds18' });
+    const [slot3, setSlot3] = useState<ISensorIdentifier>({ name: 'Balkongen', type: 'dht22' });
+    const [slot4, setSlot4] = useState<ISensorIdentifier>({ name: 'Bastu', type: 'ds18' });
+
+    const renderResource = (resource: Resource) => {
+        switch (resource) {
+        case 'dht22':
+            return <Dht22 dht22={null}/>;
+        case 'ds18':
+            return <Ds18 ds18={null}/>;
+        default:
+            return <p>Unrecognized sensor.</p>;
+        }
+    };
 
     console.log('props=', props);
 
@@ -55,8 +55,10 @@ function App(props: any) {
                 height="100vh"
             >
                 <GridItem item xs={12} sm={3}>
-                    <ResourceLoader resourceUrl={`${apiUrl}/balkongen`} resourceName="dht22">
-                        <Dht22Data dht22={null}/>
+                    <ResourceLoader
+                        resourceUrl={`${apiUrl}/${slot1.name}`}
+                        resourceName={slot1.type}>
+                        {renderResource(slot1.type)}
                     </ResourceLoader>
                 </GridItem>
                 <GridItem item xs={12} sm={3}>
@@ -66,6 +68,11 @@ function App(props: any) {
                 <GridItem item xs={12} sm={6}>
                 </GridItem>
                 <GridItem item xs={12} sm={3}>
+                    <ResourceLoader
+                        resourceUrl={`${apiUrl}/${slot2.name}`}
+                        resourceName={slot2.type}>
+                        {renderResource(slot2.type)}
+                    </ResourceLoader>
                 </GridItem>
                 <GridItem item xs={12} sm={3}>
                     <Fab color="primary" aria-label="add">

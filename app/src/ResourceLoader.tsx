@@ -14,19 +14,12 @@ export const ResourceLoader = (
                 const data = JSON.parse(await response.text());
                 setState(data);
             } else {
-                setState({
-                    name: 'string',
-                    humidity: 'number',
-                    temperature: 'number',
-                    min: 'number',
-                    max: 'number',
-                    updated: 'Date',
-                });
+                setState(null);
             }
         })();
     },
     [resourceUrl]);
-    console.log('asdf', resourceName);
+
     return <>
         {React.Children.map(children, child => {
             if (React.isValidElement(child)) {
