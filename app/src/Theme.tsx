@@ -29,7 +29,7 @@ declare module '@mui/material/styles' {
 }
 
 // eslint-disable-next-line no-undef
-export const Theme = ({ children }: { children: JSX.Element|JSX.Element[] }) => {
+export const Theme = ({ children }: { children: JSX.Element | JSX.Element[] }) => {
     // https://mui.com/customization/dark-mode/#system-preference
     const prefersDarkMode = useMediaQuery('(prefers-color-scheme: light)');
     console.log('window object:', window);
@@ -40,6 +40,9 @@ export const Theme = ({ children }: { children: JSX.Element|JSX.Element[] }) => 
             createTheme({
                 palette: {
                     mode: prefersDarkMode ? 'dark' : 'light',
+                    background: {
+                        default: prefersDarkMode ? '#1f0a72' : '#9fc1ff',
+                    },
                 },
                 item: {
                     padding: '0.5rem',
