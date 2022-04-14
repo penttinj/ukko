@@ -62,6 +62,11 @@ function App(props: any) {
                     </ResourceLoader>
                 </GridItem>
                 <GridItem item xs={12} sm={3}>
+                    <ResourceLoader
+                        resourceUrl={`${apiUrl}/${slot2.name}`}
+                        resourceName={slot2.type}>
+                        {renderResource(slot2.type)}
+                    </ResourceLoader>
                 </GridItem>
                 <GridItem item xs={12} sm={6}>
                 </GridItem>
@@ -69,12 +74,17 @@ function App(props: any) {
                 </GridItem>
                 <GridItem item xs={12} sm={3}>
                     <ResourceLoader
-                        resourceUrl={`${apiUrl}/${slot2.name}`}
-                        resourceName={slot2.type}>
-                        {renderResource(slot2.type)}
+                        resourceUrl={`${apiUrl}/${slot3.name}`}
+                        resourceName={slot3.type}>
+                        {renderResource(slot3.type)}
                     </ResourceLoader>
                 </GridItem>
                 <GridItem item xs={12} sm={3}>
+                    <ResourceLoader
+                        resourceUrl={`${apiUrl}/${slot4.name}`}
+                        resourceName={slot4.type}>
+                        {renderResource(slot4.type)}
+                    </ResourceLoader>
                     <Fab color="primary" aria-label="add">
                         <AddIcon />
                     </Fab>

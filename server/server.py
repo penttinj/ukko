@@ -34,41 +34,45 @@ def serve_favicon():
 @app.route("/sensors", methods=["POST"])
 def parse_data():
     data: dict = request.get_json()
-    node_name = data["node_name"]
-    if node_name not in sensor_data:
-        print(f"sensor_data[{node_name}] was not in sensor_data dict")
-        sensor_data[node_name] = dict()
-        sensor_data[node_name]["current_day"] = time.localtime()[2]
-    elif sensor_data[node_name]["current_day"] != time.localtime()[2]:
+    name = data["node_name"]
+    del data["node_name"]
+    data["name"] = name
+    if name not in sensor_data:
+        print(f"sensor_data[{name}] was not in sensor_data dict")
+        sensor_data[name] = dict()
+        sensor_data[name]["current_day"] = time.localtime()[2]
+    elif sensor_data[name]["current_day"] != time.localtime()[2]:
         # Is there a smarter way to do this? If i add an `or` to the previous if statement, there'll
         # be a KeyError.
-        print(f"New day for sensor_data[{node_name}]")
-        sensor_data[node_name] = dict()
-        sensor_data[node_name]["current_day"] = time.localtime()[2]
+        print(f"New day for sensor_data[{name}]")
+        sensor_data[name] = dict()
+        sensor_data[name]["current_day"] = time.localtime()[2]
     for key, value in data.items():
-        sensor_data[node_name][key] = value
-    sensor_data["updated"] = time.asctime()
-    if "min" not in sensor_data[node_name]:
-        print(f"min not in {sensor_data[node_name]}", "min" not in sensor_data[node_name])
-        sensor_data[node_name]["min"] = data["temperature"]
-    if "max" not in sensor_data[node_name]:
-        print(f"max not in {sensor_data[node_name]}", "max" not in sensor_data[node_name])
-        sensor_data[node_name]["max"] = data["temperature"]
+        sensor_data[name][key] = value
+    sensor_data[name]["updated"] = time.asctime()
+    if "min" not in sensor_data[name]:
+        print(f"min not in {sensor_data[name]}", "min" not in sensor_data[name])
+        sensor_data[name]["min"] = data["temperature"]
+    if "max" not in sensor_data[name]:
+        print(f"max not in {sensor_data[name]}", "max" not in sensor_data[name])
+        sensor_data[name]["max"] = data["temperature"]
 
-    if sensor_data[node_name]["min"] > data["temperature"]:
-        sensor_data[node_name]["min"] = data["temperature"]
+    if sensor_data[name]["min"] > data["temperature"]:
+        sensor_data[name]["min"] = data["temperature"]
 
-    if sensor_data[node_name]["max"] < data["temperature"]:
-        sensor_data[node_name]["max"] = data["temperature"]
+    if sensor_data[name]["max"] < data["temperature"]:
+        sensor_data[name]["max"] = data["temperature"]
 
     print("New sensors dict:", sensor_data)
     return jsonify(data), 200
+
 
 @app.route("/api/v1/sensors/<sensor>")
 def get_sensor(sensor):
     if sensor not in sensor_data:
         return f"Sensor {sensor} not found", 404
     return jsonify(sensor_data[sensor]), 200
+
 
 @app.route("/api/v1/sensors", methods=["GET"])
 def get_readings():
